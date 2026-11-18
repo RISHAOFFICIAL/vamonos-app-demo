@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Vamonos Detroit — Healthy Eatery & Creative Spaces</title>
+<meta name="description" content="Vamonos Detroit app demo. Order healthy food, book fitness classes, and discover community events in Southwest Detroit.">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --pink: #E91E63;
+  --pink-dark: #C2185B;
+  --pink-light: #FCE4EC;
+  --orange: #FF6B35;
+  --orange-light: #FFF3E0;
+  --teal: #00BFA5;
+  --teal-dark: #00897B;
+  --teal-light: #E0F2F1;
+  --cream: #FFF8F0;
+  --ink: #1A1A1A;
+  --muted: #666;
+  --border: #F0E6DD;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+}
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: #2D1B2E;
+  color: var(--ink);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+h1, h2, h3, .nunito { font-family: 'Nunito', sans-serif; }
+
+/* Phone frame on desktop */
+.phone-frame {
+  width: 100%;
+  max-width: 420px;
+  height: 850px;
+  max-height: calc(100vh - 40px);
+  background: var(--cream);
+  border-radius: 40px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  display: flex;
+  flex-direction: column;
+}
+@media (max-width: 480px) {
+  body { padding: 0; }
+  .phone-frame {
+    max-width: 100%;
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+}
+
+/* Status bar */
+.status-bar {
+  background: #fff;
+  padding: 12px 24px 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.status-bar .time { font-weight: 700; }
+.status-bar .icons { display: flex; gap: 6px; align-items: center; font-size: 0.8rem; }
+
+/* App header */
+.app-header {
+  background: linear-gradient(135deg, var(--pink) 0%, #FF4081 50%, var(--orange) 100%);
+  color: #fff;
+  padding: 16px 20px 20px;
+  flex-shrink: 0;
+}
+.app-header .logo-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.app-header .logo {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+}
+.app-header .logo span { font-size: 0.7rem; font-weight: 700; opacity: 0.9; display: block; letter-spacing: 2px; margin-top: -2px; }
+.cart-btn {
+  background: rgba(255,255,255,0.25);
+  border: none;
+  color: #fff;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  font-size: 1.3rem;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cart-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #fff;
+  color: var(--pink);
+  font-size: 0.7rem;
+  font-weight: 800;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+.cart-badge.show { display: flex; }
+.greeting { font-size: 0.9rem; opacity: 0.95; }
+.greeting strong { font-size: 1.1rem; display: block; margin-top: 2px; }
+
+/* Scrollable content */
+.content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 20px;
+}
+.content::-webkit-scrollbar { width: 0; }
+
+/* Screens */
+.screen { display: none; padding: 16px 16px 0; }
+.screen.active { display: block; }
+
+/* Section titles */
+.section-title {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin: 20px 0 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.section-title:first-child { margin-top: 4px; }
+.see-all {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--pink);
+  cursor: pointer;
+}
+
+/* Hero card */
+.hero-card {
+  background: linear-gradient(135deg, #FF6B35 0%, #FF8A65 100%);
+  border-radius: 20px;
+  padding: 20px;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+.hero-card::after {
+  content: "🥤";
+  position: absolute;
+  right: 12px;
+  bottom: -10px;
+  font-size: 5rem;
+  opacity: 0.25;
+}
+.hero-card .label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  opacity: 0.9;
+}
+.hero-card h2 {
+  font-size: 1.5rem;
+  font-weight: 900;
+  margin: 6px 0 4px;
+  line-height: 1.2;
+}
+.hero-card p { font-size: 0.9rem; opacity: 0.95; margin-bottom: 14px; }
+.hero-card .price { font-size: 1.3rem; font-weight: 800; }
+.hero-btn {
+  background: #fff;
+  color: var(--orange);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 24px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-top: 12px;
+}
+
+/* Quick actions */
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 16px 0;
+}
+.quick-action {
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px 8px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  border: none;
+  transition: transform 0.15s;
+}
+.quick-action:active { transform: scale(0.96); }
+.quick-action .icon { font-size: 1.8rem; margin-bottom: 6px; }
+.quick-action .label { font-size: 0.8rem; font-weight: 600; color: var(--ink); line-height: 1.3; }
+
+/* Cards */
+.card {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  margin-bottom: 12px;
+}
+.card-img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  display: block;
+}
+.card-body { padding: 14px; }
+.card-body h3 { font-size: 1rem; font-weight: 800; margin-bottom: 4px; }
+.card-body p { font-size: 0.85rem; color: var(--muted); line-height: 1.5; }
+.card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+.price-tag {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--pink);
+}
+.add-btn {
+  background: var(--pink);
+  color: #fff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.add-btn:active { transform: scale(0.95); }
+.add-btn.added { background: var(--teal); }
+
+/* Class cards */
+.class-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow);
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.class-time {
+  background: var(--pink-light);
+  color: var(--pink-dark);
+  border-radius: 12px;
+  padding: 10px;
+  text-align: center;
+  min-width: 64px;
+  flex-shrink: 0;
+}
+.class-time .time { font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 0.95rem; line-height: 1.2; }
+.class-time .ampm { font-size: 0.7rem; font-weight: 700; opacity: 0.7; }
+.class-info { flex: 1; min-width: 0; }
+.class-info h3 { font-size: 1rem; font-weight: 800; margin-bottom: 2px; }
+.class-info .trainer { font-size: 0.82rem; color: var(--muted); margin-bottom: 6px; }
+.class-info .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+.tag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.tag.pink { background: var(--pink-light); color: var(--pink-dark); }
+.tag.teal { background: var(--teal-light); color: var(--teal-dark); }
+.tag.orange { background: var(--orange-light); color: #E65100; }
+.class-book { display: flex; justify-content: space-between; align-items: center; }
+.spots { font-size: 0.8rem; color: var(--muted); }
+.spots strong { color: var(--teal-dark); }
+.book-btn {
+  background: var(--teal);
+  color: #fff;
+  border: none;
+  padding: 7px 16px;
+  border-radius: 18px;
+  font-weight: 700;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+.book-btn:active { transform: scale(0.95); }
+.book-btn.booked { background: #ccc; cursor: default; }
+
+/* Filter pills */
+.filters {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px 0 12px;
+  -webkit-overflow-scrolling: touch;
+}
+.filters::-webkit-scrollbar { width: 0; }
+.filter-pill {
+  background: #fff;
+  border: 2px solid var(--border);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.filter-pill.active {
+  background: var(--pink);
+  color: #fff;
+  border-color: var(--pink);
+}
+
+/* Menu categories */
+.menu-cats {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px 0 14px;
+  -webkit-overflow-scrolling: touch;
+}
+.menu-cats::-webkit-scrollbar { width: 0; }
+.menu-cat {
+  background: #fff;
+  border: 2px solid var(--border);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.menu-cat.active {
+  background: var(--orange);
+  color: #fff;
+  border-color: var(--orange);
+}
+
+/* Menu items */
+.menu-item {
+  background: #fff;
+  border-radius: 16px;
+  padding: 12px;
+  margin-bottom: 10px;
+  box-shadow: var(--shadow);
+  display: flex;
+  gap: 12px;
+}
+.menu-item img {
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.menu-item-info { flex: 1; min-width: 0; }
+.menu-item-info h3 { font-size: 0.95rem; font-weight: 800; margin-bottom: 2px; }
+.menu-item-info p { font-size: 0.8rem; color: var(--muted); line-height: 1.4; margin-bottom: 8px; }
+.menu-item-footer { display: flex; justify-content: space-between; align-items: center; }
+
+/* Event cards */
+.event-card {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  margin-bottom: 14px;
+}
+.event-card img { width: 100%; height: 150px; object-fit: cover; display: block; }
+.event-date-badge {
+  background: var(--pink);
+  color: #fff;
+  border-radius: 12px;
+  padding: 8px 12px;
+  text-align: center;
+  min-width: 56px;
+}
+.event-date-badge .day { font-family: 'Nunito', sans-serif; font-size: 1.3rem; font-weight: 900; line-height: 1; }
+.event-date-badge .month { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+
+/* Profile */
+.profile-header {
+  text-align: center;
+  padding: 20px 0;
+}
+.profile-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--pink), var(--orange));
+  color: #fff;
+  font-size: 2rem;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 12px;
+  font-family: 'Nunito', sans-serif;
+}
+.loyalty-card {
+  background: linear-gradient(135deg, var(--teal) 0%, #00ACC1 100%);
+  border-radius: 16px;
+  padding: 18px;
+  color: #fff;
+  margin-bottom: 16px;
+}
+.loyalty-card .points { font-family: 'Nunito', sans-serif; font-size: 2rem; font-weight: 900; }
+.loyalty-bar {
+  background: rgba(255,255,255,0.3);
+  height: 8px;
+  border-radius: 4px;
+  margin: 10px 0 6px;
+  overflow: hidden;
+}
+.loyalty-fill {
+  background: #fff;
+  height: 100%;
+  width: 65%;
+  border-radius: 4px;
+}
+.profile-row {
+  background: #fff;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+}
+.profile-row .label { font-weight: 600; font-size: 0.92rem; }
+.profile-row .value { color: var(--muted); font-size: 0.85rem; }
+
+/* Bottom tab bar */
+.tab-bar {
+  background: #fff;
+  border-top: 1px solid var(--border);
+  display: flex;
+  padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
+  flex-shrink: 0;
+}
+.tab {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 6px 0;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  color: #999;
+  font-size: 0.65rem;
+  font-weight: 600;
+  transition: color 0.15s;
+}
+.tab .tab-icon { font-size: 1.4rem; }
+.tab.active { color: var(--pink); }
+.tab.active .tab-icon { transform: scale(1.1); }
+
+/* Toast */
+.toast {
+  position: absolute;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--ink);
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 24px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s;
+  z-index: 100;
+  white-space: nowrap;
+  max-width: 90%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Cart drawer */
+.cart-drawer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border-radius: 24px 24px 0 0;
+  box-shadow: 0 -8px 30px rgba(0,0,0,0.2);
+  padding: 20px;
+  transform: translateY(100%);
+  transition: transform 0.3s;
+  z-index: 50;
+  max-height: 70%;
+  overflow-y: auto;
+}
+.cart-drawer.open { transform: translateY(0); }
+.cart-drawer h2 { font-size: 1.2rem; margin-bottom: 16px; }
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.cart-item-info { flex: 1; }
+.cart-item-info .name { font-weight: 600; font-size: 0.92rem; }
+.cart-item-info .price { color: var(--muted); font-size: 0.85rem; }
+.qty-controls { display: flex; align-items: center; gap: 10px; }
+.qty-btn {
+  background: var(--pink-light);
+  color: var(--pink-dark);
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-weight: 800;
+  cursor: pointer;
+  font-size: 1rem;
+}
+.cart-total {
+  display: flex;
+  justify-content: space-between;
+  margin: 16px 0;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+.checkout-btn {
+  background: var(--pink);
+  color: #fff;
+  border: none;
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.close-cart {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  cursor: pointer;
+  color: var(--muted);
+}
+
+/* Info banner */
+.info-banner {
+  background: var(--teal-light);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin: 12px 0;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.info-banner .icon { font-size: 1.2rem; flex-shrink: 0; }
+.info-banner p { font-size: 0.82rem; line-height: 1.5; color: #004D40; }
+.info-banner strong { color: var(--teal-dark); }
+
+/* Desktop info panel */
+.desktop-info {
+  display: none;
+  max-width: 380px;
+  margin-left: 40px;
+  color: #fff;
+}
+@media (min-width: 900px) {
+  .desktop-info { display: block; }
+  body { gap: 0; }
+}
+.desktop-info h1 {
+  font-family: 'Nunito', sans-serif;
+  font-size: 2rem;
+  font-weight: 900;
+  margin-bottom: 12px;
+  line-height: 1.2;
+}
+.desktop-info p { font-size: 1rem; line-height: 1.6; opacity: 0.9; margin-bottom: 16px; }
+.desktop-info .features { list-style: none; margin: 20px 0; }
+.desktop-info .features li {
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.15);
+  font-size: 0.95rem;
+}
+.desktop-info .features li::before {
+  content: "✓ ";
+  color: var(--teal);
+  font-weight: 800;
+}
+.desktop-info .cta {
+  background: var(--pink);
+  color: #fff;
+  padding: 14px 28px;
+  border-radius: 28px;
+  text-decoration: none;
+  font-weight: 700;
+  display: inline-block;
+  margin-top: 16px;
+}
+.desktop-info .disclaimer {
+  font-size: 0.8rem;
+  opacity: 0.6;
+  margin-top: 24px;
+  line-height: 1.5;
+}
+</style>
+</head>
+<body>
+
+<div class="phone-frame">
+  <!-- Status bar -->
+  <div class="status-bar">
+    <span class="time" id="clock">9:41</span>
+    <span class="icons">📶 📡 🔋</span>
+  </div>
+
+  <!-- App header -->
+  <div class="app-header">
+    <div class="logo-row">
+      <div class="logo">Vámonos!<span>DETROIT • SW DETROIT</span></div>
+      <button class="cart-btn" onclick="toggleCart()" aria-label="View cart">🛒<span class="cart-badge" id="cartBadge">0</span></button>
+    </div>
+    <div class="greeting">Bienvenidos! 👋<strong>What are we doing today?</strong></div>
+  </div>
+
+  <!-- Scrollable content -->
+  <div class="content" id="content">
+
+    <!-- HOME SCREEN -->
+    <div class="screen active" id="screen-home">
+      <div class="hero-card">
+        <div class="label">Smoothie of the Day</div>
+        <h2>Galaxy Love Smoothie</h2>
+        <p>Blueberry, banana, almond milk, honey, and a touch of magic. Our most loved smoothie.</p>
+        <div class="price">$7.50</div>
+        <button class="hero-btn" onclick="addToCart('Galaxy Love Smoothie', 7.50, this)">Add to Order →</button>
+      </div>
+
+      <div class="quick-actions">
+        <button class="quick-action" onclick="switchTab('order')">
+          <div class="icon">🥤</div>
+          <div class="label">Order Food</div>
+        </button>
+        <button class="quick-action" onclick="switchTab('classes')">
+          <div class="icon">💃</div>
+          <div class="label">Book a Class</div>
+        </button>
+        <button class="quick-action" onclick="switchTab('events')">
+          <div class="icon">🎨</div>
+          <div class="label">Events</div>
+        </button>
+      </div>
+
+      <div class="info-banner">
+        <span class="icon">🎉</span>
+        <p><strong>Free Zumba every Saturday at 10:30 AM!</strong> No sign-up needed. Just show up and dance with Jean Simmons.</p>
+      </div>
+
+      <div class="section-title">Today's Classes <span class="see-all" onclick="switchTab('classes')">See all →</span></div>
+
+      <div class="class-card">
+        <div class="class-time"><div class="time">9:15</div><div class="ampm">AM</div></div>
+        <div class="class-info">
+          <h3>Zumba</h3>
+          <div class="trainer">with Olivia Carroll</div>
+          <div class="tags"><span class="tag pink">Dance</span><span class="tag teal">$5.00</span></div>
+          <div class="class-book">
+            <span class="spots"><strong>8 spots</strong> left</span>
+            <button class="book-btn" onclick="bookClass(this, 'Zumba')">Book</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="class-card">
+        <div class="class-time"><div class="time">5:15</div><div class="ampm">PM</div></div>
+        <div class="class-info">
+          <h3>Zumba</h3>
+          <div class="trainer">with María Juárez</div>
+          <div class="tags"><span class="tag pink">Dance</span><span class="tag teal">$5.00</span></div>
+          <div class="class-book">
+            <span class="spots"><strong>12 spots</strong> left</span>
+            <button class="book-btn" onclick="bookClass(this, 'Zumba')">Book</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="class-card">
+        <div class="class-time"><div class="time">6:30</div><div class="ampm">PM</div></div>
+        <div class="class-info">
+          <h3>Fitness Class</h3>
+          <div class="trainer">with Melissa Mendez</div>
+          <div class="tags"><span class="tag orange">Strength</span><span class="tag teal">Ask</span></div>
+          <div class="class-book">
+            <span class="spots"><strong>6 spots</strong> left</span>
+            <button class="book-btn" onclick="bookClass(this, 'Fitness Class')">Book</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title">This Week at Vámonos</div>
+
+      <div class="card">
+        <img class="card-img" src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&auto=format&fit=crop" alt="Fresh healthy food">
+        <div class="card-body">
+          <h3>🥗 Fresh, Affordable, Made with Love</h3>
+          <p>Our Bonita Salad and Botana Drip showcase fresh, affordable flavors. Most dishes under $9. Everything in eco-friendly packaging.</p>
+          <div class="card-meta">
+            <span style="font-size: 0.85rem; color: var(--muted);">⭐ 5.0 · 54 Google reviews</span>
+            <span style="font-size: 0.85rem; color: var(--pink); font-weight: 700; cursor: pointer;" onclick="switchTab('order')">Order now →</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <img class="card-img" src="https://images.unsplash.com/photo-1518310383802-640c2de311b2?w=800&auto=format&fit=crop" alt="Yoga class">
+        <div class="card-body">
+          <h3>🧘 More Than a Cafe</h3>
+          <p>Zumba, yoga, cardio drumming, heels class, art shows, workshops, and community markets. All under one roof at 4444 W Vernor Hwy.</p>
+          <div class="card-meta">
+            <span style="font-size: 0.85rem; color: var(--muted);">Mon-Fri 6 AM - 8 PM</span>
+            <span style="font-size: 0.85rem; color: var(--pink); font-weight: 700; cursor: pointer;" onclick="switchTab('classes')">View schedule →</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ORDER SCREEN -->
+    <div class="screen" id="screen-order">
+      <div class="section-title">Order Food 🥤</div>
+      <p style="font-size: 0.88rem; color: var(--muted); margin-bottom: 12px;">Fresh, healthy, affordable. Pick up at 4444 W Vernor Hwy or order on DoorDash.</p>
+
+      <div class="menu-cats">
+        <button class="menu-cat active" onclick="filterMenu('all', this)">All</button>
+        <button class="menu-cat" onclick="filterMenu('smoothies', this)">Smoothies</button>
+        <button class="menu-cat" onclick="filterMenu('wraps', this)">Wraps & Sandwiches</button>
+        <button class="menu-cat" onclick="filterMenu('salads', this)">Salads</button>
+        <button class="menu-cat" onclick="filterMenu('drinks', this)">Drinks</button>
+        <button class="menu-cat" onclick="filterMenu('snacks', this)">Snacks</button>
+      </div>
+
+      <div id="menuItems">
+        <div class="menu-item" data-cat="smoothies">
+          <img src="https://images.unsplash.com/photo-1502741224143-90386d7f8c82?w=200&auto=format&fit=crop" alt="Galaxy Love Smoothie">
+          <div class="menu-item-info">
+            <h3>Galaxy Love Smoothie</h3>
+            <p>Blueberry, banana, almond milk, honey. Our most loved smoothie!</p>
+            <div class="menu-item-footer">
+              <span class="price-tag">$7.50</span>
+              <button class="add-btn" onclick="addToCart('Galaxy Love Smoothie', 7.50, this)">Add</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-item" data-cat="smoothies">
+          <img src="https://images.unsplash.com/photo-1610970881699-44a5587cabec?w=200&auto=format&fit=crop" alt="Benito Smoothie">
+          <div class="menu-item-info">
+            <h3>Benito Smoothie</h3>
+            <p>Tropical twist with mango, pineapple, and coconut milk.</p>
+            <div class="menu-item-footer">
+              <span class="price-tag">$7.00</span>
+              <button class="add-btn" onclick="addToCart('Benito Smoothie', 7.00, this)">Add</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-item" data-cat="smoothies">
+          <img src="https://images.unsplash.com/photo-1553530666-ba11a7da3888?w=200&auto=format&fit=crop" alt="Belle Isle Smoothie">
+          <div class="menu-item-info">
+            <h3>Belle Isle Smoothie</h3>
+            <p>Strawberry, banana, Greek yogurt, and a drizzle of honey.</p>
+            <div class="menu-item-footer">
+              <span class="price-tag">$7.00</span>
+              <button class="add-btn" onclick="addToCart('Belle Isle Smoothie', 7.00, this)">Add</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-item" data-cat="wraps">
+          <img src="https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=200&auto=format&fit=crop" alt="La Califas Wrap">
+          <div class="menu-item-info">
+            <h3>La Califas Wrap</h3>
+            <p>Grilled chicken, avocado, chipotle mayo, lettuce, tomato. Customer favorite!</p>
+            <div class="menu-item-footer">
+              <span class="price-tag">$8.50</span>
+              <button class="add-btn" onclick="addToCart('La Califas Wrap', 8.50, this)">Add</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-item" data-cat="wraps">
+          <img src="https://images.unsplash.com/photo-1541519227354-08fa5d50c44d?w=200&auto=format&fit=crop" alt="Avocado Toast">
+          <div class="menu-item-info">
+            <h3>Avocado Toast</h3>
+            <p>Sourdough bread, smashed avocado, chili flakes, lime, microgreens.</p>
+            <div class="menu-item-footer">
+              <span class="price-tag">$6.50</span>
+              <button class="add-btn" onclick="addToCart('Avocado Toast', 6.50, this)">Add</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-item" data-cat="salads">
+          <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=200&auto=format&fit=crop" alt="Bonita Salad">
+          <div class="menu-item-info">
+            <h3>Bonita Salad</h3>
+            <p>Fresh greens, quinoa, black beans, corn, avocado, lime vinaigrette.</p>
+            <div class="menu-item-footer">
+              <span class="price-tag">$8.00</span>
+              <button class="add-btn" onclick="addToCart('Bonita Salad', 8.00, this)">Add</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-item" data-cat="salads">
+          <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200&auto=format&fit=crop" alt="Botana Drip">
+          <div class="menu-item-info">
+            <h3>Botana Drip</h3>
+            <p>Our signature snack plate. Fresh veggies, hummus, and our house dip.</p>
+            <div class="menu-item-footer">
+              <span class="price-tag">$6.00</span>
+              <button class="add-btn" onclick="addToCart('Botana Drip', 6.00, this)">Add</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-item" data-cat="drinks">
+          <img src="https://images.unsplash.com/photo-1437418747212-8d9709afab22?w=200&auto=format&fit=crop" alt="Sol Lemonade">
+          <div class="menu-item-info">
+            <h3>Sol Lemonade</h3>
+            <p>Hand-shaken lemonade with a hint of mint. Clean energy in a cup!</p>
+            <div class="menu-item-footer">
+              <span class="price-tag">$5.00</span>
+              <button class="add-btn" onclick="addToCart('Sol Lemonade', 5.00, this)">Add</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-item" data-cat="drinks">
+          <img src="https://images.unsplash.com/photo-1544145945-f90425340c7e?w=200&auto=format&fit=crop" alt="Aguas Frescas">
+          <div class="menu-item-info">
+            <h3>Aguas Frescas</h3>
+            <p>Fresh daily. Horchata, Jamaica, or Tamarindo. Made with love.</p>
+            <div class="menu-item-footer">
+              <span class="price-tag">$4.50</span>
+              <button class="add-btn" onclick="addToCart('Aguas Frescas', 4.50, this)">Add</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-item" data-cat="snacks">
+          <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=200&auto=format&fit=crop" alt="Conchas">
+          <div class="menu-item-info">
+            <h3>Conchas</h3>
+            <p>Sweet Mexican bread. Vanilla or chocolate. Only $2!</p>
+            <div class="menu-item-footer">
+              <span class="price-tag">$2.00</span>
+              <button class="add-btn" onclick="addToCart('Conchas', 2.00, this)">Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLASSES SCREEN -->
+    <div class="screen" id="screen-classes">
+      <div class="section-title">Fitness Classes 💃</div>
+      <p style="font-size: 0.88rem; color: var(--muted); margin-bottom: 12px;">Book your spot. Most classes are $5-$10 or donation-based. All levels welcome!</p>
+
+      <div class="filters">
+        <button class="filter-pill active" onclick="filterClasses('all', this)">All</button>
+        <button class="filter-pill" onclick="filterClasses('dance', this)">Dance</button>
+        <button class="filter-pill" onclick="filterClasses('fitness', this)">Fitness</button>
+        <button class="filter-pill" onclick="filterClasses('yoga', this)">Yoga & Mind</button>
+        <button class="filter-pill" onclick="filterClasses('free', this)">Free / Donation</button>
+      </div>
+
+      <div id="classList">
+        <div class="class-card" data-type="dance">
+          <div class="class-time"><div class="time">5:45</div><div class="ampm">AM</div></div>
+          <div class="class-info">
+            <h3>5 AM Booty Camp</h3>
+            <div class="trainer">with Olivia Carroll · Mon-Sat</div>
+            <div class="tags"><span class="tag orange">Boot Camp</span><span class="tag teal">$7.00</span></div>
+            <div class="class-book">
+              <span class="spots"><strong>10 spots</strong> left</span>
+              <button class="book-btn" onclick="bookClass(this, '5 AM Booty Camp')">Book</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="class-card" data-type="dance">
+          <div class="class-time"><div class="time">9:15</div><div class="ampm">AM</div></div>
+          <div class="class-info">
+            <h3>Zumba</h3>
+            <div class="trainer">with Olivia Carroll · Mon-Fri</div>
+            <div class="tags"><span class="tag pink">Dance</span><span class="tag teal">$5.00</span></div>
+            <div class="class-book">
+              <span class="spots"><strong>8 spots</strong> left</span>
+              <button class="book-btn" onclick="bookClass(this, 'Zumba')">Book</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="class-card" data-type="dance">
+          <div class="class-time"><div class="time">10:00</div><div class="ampm">AM</div></div>
+          <div class="class-info">
+            <h3>Baila Fitness</h3>
+            <div class="trainer">with Olivia Carroll · Sat</div>
+            <div class="tags"><span class="tag pink">Dance</span><span class="tag teal">Donation</span></div>
+            <div class="class-book">
+              <span class="spots"><strong>15 spots</strong> left</span>
+              <button class="book-btn" onclick="bookClass(this, 'Baila Fitness')">Book</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="class-card" data-type="fitness">
+          <div class="class-time"><div class="time">10:00</div><div class="ampm">AM</div></div>
+          <div class="class-info">
+            <h3>Cardio Drumming</h3>
+            <div class="trainer">with Jean Simmons · Wed</div>
+            <div class="tags"><span class="tag orange">Cardio</span><span class="tag teal">Donation</span></div>
+            <div class="class-book">
+              <span class="spots"><strong>12 spots</strong> left</span>
+              <button class="book-btn" onclick="bookClass(this, 'Cardio Drumming')">Book</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="class-card" data-type="dance">
+          <div class="class-time"><div class="time">5:15</div><div class="ampm">PM</div></div>
+          <div class="class-info">
+            <h3>Zumba</h3>
+            <div class="trainer">with María Juárez · Mon</div>
+            <div class="tags"><span class="tag pink">Dance</span><span class="tag teal">$5.00</span></div>
+            <div class="class-book">
+              <span class="spots"><strong>12 spots</strong> left</span>
+              <button class="book-btn" onclick="bookClass(this, 'Zumba')">Book</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="class-card" data-type="dance">
+          <div class="class-time"><div class="time">5:30</div><div class="ampm">PM</div></div>
+          <div class="class-info">
+            <h3>Bachata</h3>
+            <div class="trainer">with María Juárez · Wed</div>
+            <div class="tags"><span class="tag pink">Dance</span><span class="tag teal">$10.00</span></div>
+            <div class="class-book">
+              <span class="spots"><strong>9 spots</strong> left</span>
+              <button class="book-btn" onclick="bookClass(this, 'Bachata')">Book</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="class-card" data-type="fitness">
+          <div class="class-time"><div class="time">6:30</div><div class="ampm">PM</div></div>
+          <div class="class-info">
+            <h3>Fitness Class</h3>
+            <div class="trainer">with Melissa Mendez · Mon & Thu</div>
+            <div class="tags"><span class="tag orange">Strength</span><span class="tag teal">Ask</span></div>
+            <div class="class-book">
+              <span class="spots"><strong>6 spots</strong> left</span>
+              <button class="book-btn" onclick="bookClass(this, 'Fitness Class')">Book</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="class-card" data-type="dance">
+          <div class="class-time"><div class="time">7:00</div><div class="ampm">PM</div></div>
+          <div class="class-info">
+            <h3>Capoeira</h3>
+            <div class="trainer">with María Juárez · Tue & Sat</div>
+            <div class="tags"><span class="tag pink">Martial Arts</span><span class="tag teal">Ask</span></div>
+            <div class="class-book">
+              <span class="spots"><strong>11 spots</strong> left</span>
+              <button class="book-btn" onclick="bookClass(this, 'Capoeira')">Book</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="class-card" data-type="dance">
+          <div class="class-time"><div class="time">7:30</div><div class="ampm">PM</div></div>
+          <div class="class-info">
+            <h3>Heels Class</h3>
+            <div class="trainer">with Zoé Clark · Mon & Thu</div>
+            <div class="tags"><span class="tag pink">Dance</span><span class="tag teal">Ask</span></div>
+            <div class="class-book">
+              <span class="spots"><strong>7 spots</strong> left</span>
+              <button class="book-btn" onclick="bookClass(this, 'Heels Class')">Book</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="class-card" data-type="yoga">
+          <div class="class-time"><div class="time">8:00</div><div class="ampm">PM</div></div>
+          <div class="class-info">
+            <h3>Sound Bath</h3>
+            <div class="trainer">with Jean Simmons · Wed</div>
+            <div class="tags"><span class="tag teal">Wellness</span><span class="tag teal">Donation</span></div>
+            <div class="class-book">
+              <span class="spots"><strong>14 spots</strong> left</span>
+              <button class="book-btn" onclick="bookClass(this, 'Sound Bath')">Book</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-banner">
+        <span class="icon">💡</span>
+        <p><strong>First time?</strong> Try a free Zumba class on Saturday at 10:30 AM with Jean Simmons. No sign-up needed, just show up!</p>
+      </div>
+    </div>
+
+    <!-- EVENTS SCREEN -->
+    <div class="screen" id="screen-events">
+      <div class="section-title">Events & Community 🎨</div>
+      <p style="font-size: 0.88rem; color: var(--muted); margin-bottom: 14px;">Art shows, workshops, markets, and community gatherings. All at Vámonos!</p>
+
+      <div class="event-card">
+        <img src="https://images.unsplash.com/photo-1531058020387-3be344556be6?w=800&auto=format&fit=crop" alt="Art show">
+        <div class="card-body">
+          <div style="display: flex; gap: 12px;">
+            <div class="event-date-badge"><div class="day">22</div><div class="month">Nov</div></div>
+            <div style="flex: 1;">
+              <h3>Transmitir Art Show</h3>
+              <p style="font-size: 0.85rem; color: var(--muted);">4:00 PM - 11:00 PM · Free entry</p>
+              <p style="margin-top: 6px;">Local artists showcase their work in our creative space. Come celebrate Detroit creativity!</p>
+              <button class="add-btn" style="margin-top: 10px;" onclick="showToast('🎨 Added to your calendar!')">Get Tickets</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="event-card">
+        <img src="https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=800&auto=format&fit=crop" alt="Community market">
+        <div class="card-body">
+          <div style="display: flex; gap: 12px;">
+            <div class="event-date-badge" style="background: var(--teal);"><div class="day">29</div><div class="month">Nov</div></div>
+            <div style="flex: 1;">
+              <h3>Mercadito — Community Market</h3>
+              <p style="font-size: 0.85rem; color: var(--muted);">10:00 AM - 3:00 PM · Free entry</p>
+              <p style="margin-top: 6px;">Shop local vendors, artisans, and small businesses. Handmade goods, fresh produce, and cultural treasures.</p>
+              <button class="add-btn" style="margin-top: 10px; background: var(--teal);" onclick="showToast('🛍️ Added to your calendar!')">Get Tickets</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="event-card">
+        <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&auto=format&fit=crop" alt="Wellness workshop">
+        <div class="card-body">
+          <div style="display: flex; gap: 12px;">
+            <div class="event-date-badge" style="background: var(--orange);"><div class="day">06</div><div class="month">Dec</div></div>
+            <div style="flex: 1;">
+              <h3>Mental Health Workshop</h3>
+              <p style="font-size: 0.85rem; color: var(--muted);">2:00 PM - 4:00 PM · Donation-based</p>
+              <p style="margin-top: 6px;">Mindfulness, community support, and creative practices for emotional balance and resilience.</p>
+              <button class="add-btn" style="margin-top: 10px; background: var(--orange);" onclick="showToast('🧘 Added to your calendar!')">Get Tickets</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="event-card">
+        <img src="https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=800&auto=format&fit=crop" alt="Art workshop">
+        <div class="card-body">
+          <div style="display: flex; gap: 12px;">
+            <div class="event-date-badge" style="background: #9C27B0;"><div class="day">13</div><div class="month">Dec</div></div>
+            <div style="flex: 1;">
+              <h3>Creative Circle Art & Craft Club</h3>
+              <p style="font-size: 0.85rem; color: var(--muted);">4:30 PM - 5:30 PM · Free</p>
+              <p style="margin-top: 6px;">A fun, interactive way to express creativity while learning new artistic techniques. All ages welcome!</p>
+              <button class="add-btn" style="margin-top: 10px; background: #9C27B0;" onclick="showToast('🎨 Added to your calendar!')">Get Tickets</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-banner">
+        <span class="icon">📅</span>
+        <p><strong>After-School Programs:</strong> Safe, enriching space for kids and teens. Arts, fitness, and educational activities. Ask at the front desk!</p>
+      </div>
+    </div>
+
+    <!-- PROFILE SCREEN -->
+    <div class="screen" id="screen-profile">
+      <div class="profile-header">
+        <div class="profile-avatar">M</div>
+        <h2 style="font-size: 1.3rem;">Maria Lopez</h2>
+        <p style="color: var(--muted); font-size: 0.88rem;">Southwest Detroit · Member since 2024</p>
+      </div>
+
+      <div class="loyalty-card">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+          <div>
+            <div style="font-size: 0.8rem; opacity: 0.9; font-weight: 600;">LOYALTY POINTS</div>
+            <div class="points">130</div>
+            <div style="font-size: 0.85rem; opacity: 0.9;">points earned</div>
+          </div>
+          <div style="font-size: 2rem;">🌟</div>
+        </div>
+        <div class="loyalty-bar"><div class="loyalty-fill"></div></div>
+        <p style="font-size: 0.82rem;">70 more points until your FREE smoothie! 🎉</p>
+      </div>
+
+      <div class="section-title">My Bookings</div>
+      <div class="profile-row" onclick="showToast('📋 Your bookings will appear here')">
+        <span class="label">📅 Upcoming Classes</span>
+        <span class="value">3 booked →</span>
+      </div>
+      <div class="profile-row" onclick="showToast('🎫 Your tickets will appear here')">
+        <span class="label">🎫 Event Tickets</span>
+        <span class="value">1 ticket →</span>
+      </div>
+      <div class="profile-row" onclick="showToast('🛒 Your order history will appear here')">
+        <span class="label">🛒 Order History</span>
+        <span class="value">12 orders →</span>
+      </div>
+
+      <div class="section-title">Favorites</div>
+      <div class="profile-row" onclick="showToast('❤️ Galaxy Love Smoothie is your favorite!')">
+        <span class="label">❤️ Favorite Smoothie</span>
+        <span class="value">Galaxy Love</span>
+      </div>
+      <div class="profile-row" onclick="showToast('💃 Zumba with Olivia is your favorite class!')">
+        <span class="label">💃 Favorite Class</span>
+        <span class="value">Zumba · Olivia</span>
+      </div>
+
+      <div class="section-title">Vámonos Info</div>
+      <div class="profile-row" onclick="showToast('📍 4444 W Vernor Hwy, Detroit, MI 48209')">
+        <span class="label">📍 Address</span>
+        <span class="value">4444 W Vernor Hwy</span>
+      </div>
+      <div class="profile-row" onclick="showToast('📞 (313) 398-5043')">
+        <span class="label">📞 Phone</span>
+        <span class="value">(313) 398-5043</span>
+      </div>
+      <div class="profile-row" onclick="showToast('🕐 Mon-Fri 6 AM - 8 PM · Sat 7 AM - 5 PM · Sun 11:30 AM - 5 PM')">
+        <span class="label">🕐 Hours</span>
+        <span class="value">Open Now →</span>
+      </div>
+      <div class="profile-row" onclick="showToast('🌐 vamonosdetroit.com')">
+        <span class="label">🌐 Website</span>
+        <span class="value">vamonosdetroit.com</span>
+      </div>
+
+      <div style="text-align: center; margin-top: 24px; padding: 16px; background: #fff; border-radius: 12px;">
+        <p style="font-size: 0.85rem; color: var(--muted); line-height: 1.6;">
+          <strong style="color: var(--ink);">Demo App by Lexis Sapphire Studio</strong><br>
+          This is a concept prototype showing what a Vámonos app could look like.<br>
+          Not affiliated with Vámonos Detroit.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom tab bar -->
+  <div class="tab-bar">
+    <button class="tab active" onclick="switchTab('home')" data-tab="home">
+      <span class="tab-icon">🏠</span>
+      <span>Home</span>
+    </button>
+    <button class="tab" onclick="switchTab('order')" data-tab="order">
+      <span class="tab-icon">🥤</span>
+      <span>Order</span>
+    </button>
+    <button class="tab" onclick="switchTab('classes')" data-tab="classes">
+      <span class="tab-icon">💃</span>
+      <span>Classes</span>
+    </button>
+    <button class="tab" onclick="switchTab('events')" data-tab="events">
+      <span class="tab-icon">🎨</span>
+      <span>Events</span>
+    </button>
+    <button class="tab" onclick="switchTab('profile')" data-tab="profile">
+      <span class="tab-icon">👤</span>
+      <span>Profile</span>
+    </button>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Cart drawer -->
+  <div class="cart-drawer" id="cartDrawer">
+    <button class="close-cart" onclick="toggleCart()">×</button>
+    <h2>Your Order 🛒</h2>
+    <div id="cartItems">
+      <p style="color: var(--muted); text-align: center; padding: 20px 0;">Your cart is empty.<br>Add some delicious items!</p>
+    </div>
+    <div class="cart-total" id="cartTotal" style="display: none;">
+      <span>Total</span>
+      <span id="totalAmount">$0.00</span>
+    </div>
+    <button class="checkout-btn" id="checkoutBtn" style="display: none;" onclick="checkout()">Place Order for Pickup</button>
+  </div>
+
+</div>
+
+<!-- Desktop info panel -->
+<div class="desktop-info">
+  <h1>Vámonos! Detroit<br>App Concept</h1>
+  <p>A native iOS app that brings healthy food, fitness classes, and community events together in one place. No more jumping between links.</p>
+
+  <ul class="features">
+    <li><strong>Order Food:</strong> Smoothies, wraps, salads, aguas frescas. Pickup or DoorDash.</li>
+    <li><strong>Book Classes:</strong> Zumba, Baila Fitness, Heels, Booty Camp, Yoga, and more.</li>
+    <li><strong>Events:</strong> Art shows, workshops, mercaditos, community markets.</li>
+    <li><strong>Loyalty:</strong> Earn points with every order. Free smoothie at 200 points.</li>
+    <li><strong>Bilingual:</strong> English and Spanish, just like the community.</li>
+  </ul>
+
+  <p style="font-size: 0.9rem; opacity: 0.8;">
+    <strong>Try it:</strong> Tap the tabs at the bottom. Add items to your cart. Book a class. It's fully interactive!
+  </p>
+
+  <a href="https://rishaofficial.github.io/lexis-sapphire-studio/" class="cta" target="_blank">Built by Lexis Sapphire Studio →</a>
+
+  <p class="disclaimer">
+    Demo concept by Lexis Sapphire Studio for Vámonos Detroit.<br>
+    4444 W Vernor Hwy, Detroit, MI 48209 · (313) 398-5043<br>
+    This is a prototype, not a real app. No orders are processed.
+  </p>
+</div>
+
+<script>
+// Clock
+function updateClock() {
+  const now = new Date();
+  let h = now.getHours();
+  let m = now.getMinutes();
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  h = h % 12 || 12;
+  m = m < 10 ? '0' + m : m;
+  document.getElementById('clock').textContent = h + ':' + m;
+}
+updateClock();
+setInterval(updateClock, 30000);
+
+// Tab navigation
+function switchTab(tabName) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('screen-' + tabName).classList.add('active');
+  document.querySelector('[data-tab="' + tabName + '"]').classList.add('active');
+  document.getElementById('content').scrollTop = 0;
+  closeCart();
+}
+
+// Cart
+let cart = {};
+
+function addToCart(name, price, btn) {
+  if (cart[name]) {
+    cart[name].qty++;
+  } else {
+    cart[name] = { price: price, qty: 1 };
+  }
+  updateCartBadge();
+  showToast('✅ ' + name + ' added to cart');
+
+  if (btn) {
+    const origText = btn.textContent;
+    btn.textContent = 'Added ✓';
+    btn.classList.add('added');
+    setTimeout(() => {
+      btn.textContent = origText;
+      btn.classList.remove('added');
+    }, 1500);
+  }
+}
+
+function updateCartBadge() {
+  const total = Object.values(cart).reduce((sum, item) => sum + item.qty, 0);
+  const badge = document.getElementById('cartBadge');
+  badge.textContent = total;
+  badge.classList.toggle('show', total > 0);
+}
+
+function toggleCart() {
+  const drawer = document.getElementById('cartDrawer');
+  drawer.classList.toggle('open');
+  if (drawer.classList.contains('open')) {
+    renderCart();
+  }
+}
+
+function closeCart() {
+  document.getElementById('cartDrawer').classList.remove('open');
+}
+
+function renderCart() {
+  const container = document.getElementById('cartItems');
+  const totalEl = document.getElementById('cartTotal');
+  const checkoutBtn = document.getElementById('checkoutBtn');
+  const totalAmount = document.getElementById('totalAmount');
+
+  const items = Object.entries(cart);
+  if (items.length === 0) {
+    container.innerHTML = '<p style="color: var(--muted); text-align: center; padding: 20px 0;">Your cart is empty.<br>Add some delicious items!</p>';
+    totalEl.style.display = 'none';
+    checkoutBtn.style.display = 'none';
+    return;
+  }
+
+  let html = '';
+  let total = 0;
+  items.forEach(([name, item]) => {
+    const itemTotal = item.price * item.qty;
+    total += itemTotal;
+    html += `
+      <div class="cart-item">
+        <div class="cart-item-info">
+          <div class="name">${name}</div>
+          <div class="price">$${item.price.toFixed(2)} each</div>
+        </div>
+        <div class="qty-controls">
+          <button class="qty-btn" onclick="changeQty('${name}', -1)">−</button>
+          <span style="font-weight: 700; min-width: 20px; text-align: center;">${item.qty}</span>
+          <button class="qty-btn" onclick="changeQty('${name}', 1)">+</button>
+        </div>
+        <div style="font-weight: 700; margin-left: 12px; min-width: 60px; text-align: right;">$${itemTotal.toFixed(2)}</div>
+      </div>
+    `;
+  });
+  container.innerHTML = html;
+  totalAmount.textContent = '$' + total.toFixed(2);
+  totalEl.style.display = 'flex';
+  checkoutBtn.style.display = 'block';
+}
+
+function changeQty(name, delta) {
+  cart[name].qty += delta;
+  if (cart[name].qty <= 0) {
+    delete cart[name];
+  }
+  updateCartBadge();
+  renderCart();
+}
+
+function checkout() {
+  const total = Object.values(cart).reduce((sum, item) => sum + (item.price * item.qty), 0);
+  showToast('🎉 Order placed! Total: $' + total.toFixed(2) + ' · Ready in 15 min');
+  cart = {};
+  updateCartBadge();
+  setTimeout(() => {
+    closeCart();
+    renderCart();
+  }, 1000);
+}
+
+// Book class
+function bookClass(btn, className) {
+  if (btn.classList.contains('booked')) return;
+  btn.textContent = 'Booked ✓';
+  btn.classList.add('booked');
+  showToast('✅ ' + className + ' booked! See you there!');
+}
+
+// Menu filter
+function filterMenu(cat, btn) {
+  document.querySelectorAll('.menu-cat').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.menu-item').forEach(item => {
+    if (cat === 'all' || item.dataset.cat === cat) {
+      item.style.display = 'flex';
+    } else {
+      item.style.display = 'none';
+    }
+  });
+}
+
+// Class filter
+function filterClasses(type, btn) {
+  document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#classList .class-card').forEach(card => {
+    if (type === 'all') {
+      card.style.display = 'flex';
+    } else if (type === 'free') {
+      const text = card.textContent.toLowerCase();
+      card.style.display = (text.includes('donation') || text.includes('free')) ? 'flex' : 'none';
+    } else {
+      card.style.display = card.dataset.type === type ? 'flex' : 'none';
+    }
+  });
+}
+
+// Toast
+let toastTimeout;
+function showToast(message) {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.classList.add('show');
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3000);
+}
+
+// Close cart when clicking outside
+document.getElementById('content').addEventListener('click', function(e) {
+  const drawer = document.getElementById('cartDrawer');
+  if (drawer.classList.contains('open') && !drawer.contains(e.target)) {
+    closeCart();
+  }
+});
+</script>
+
+</body>
+</html>
